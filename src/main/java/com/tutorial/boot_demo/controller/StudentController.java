@@ -27,4 +27,10 @@ public class StudentController {
         studentService.deleteStudentById(id);
 
     }
+
+    @PutMapping("/student/{id}")
+    public Response<StudentsDTO> updateStudentById(@PathVariable long id, @RequestParam(required = false) String name,
+                                            @RequestParam(required = false) String email) {
+        return Response.newSuccess(studentService.updatestudentByID(id, name, email));
+    }
 }

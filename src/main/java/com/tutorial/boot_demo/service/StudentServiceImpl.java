@@ -6,7 +6,9 @@ import com.tutorial.boot_demo.dao.StudentRepository;
 import com.tutorial.boot_demo.dto.StudentsDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -36,6 +38,20 @@ public class StudentServiceImpl implements StudentService{
     public void deleteStudentById(long id) {
         studentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("id" + id + " is not exist"));
         studentRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public StudentsDTO updatestudentByID(long id, String name, String email) {
+        Student studentInDB = studentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("id" + id + " is not exist"));
+        if (StringUtils.hasLength(name) && !studentInDB.getName().equals(name)) {
+            studentInDB.setName(name);
+        }
+        if (StringUtils.hasLength(email) && !studentInDB.getEmail().equals(email)) {
+            studentInDB.setEmail(email);
+        }
+        Student student = studentRepository.save(studentInDB);
+        return StudentConverter.convertStudentsDTO(student);
     }
 }
  
